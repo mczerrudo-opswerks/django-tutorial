@@ -8,16 +8,11 @@ def run():
     # Create a new restaurant
     restaurant = Restaurant.objects.first()
     user = User.objects.first()
-
-    rating =Rating.objects.create(
-        user=user,
-        restaurant=restaurant,
-        rating=0
-    )
-
-    rating.full_clean()  # Validate the model instance
-    rating.save()  # Save the instance to the database
-
+    print(restaurant.name)
+    
+    restaurant.name = 'A New Restaurant Name'
+    restaurant.save(update_fields=['name'])  # Save the changes to the database
+   
     pprint(connection.queries)  # Print all SQL queries executed during this run
 
 

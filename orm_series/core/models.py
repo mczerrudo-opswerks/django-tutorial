@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 # User model
@@ -13,6 +14,15 @@ class CustomUser(AbstractUser):
         return self.username
 
 UserModel = get_user_model()
+
+
+# Custom Validation 
+def validate_restaurant_name_begins_with_a(value):
+    if not value.startswith('a'):
+        raise ValidationError(
+            f'{value} does not start with "A". Please enter a valid restaurant name.'
+        )
+
 
 # Restaurant model
 class Restaurant(models.Model):
@@ -25,7 +35,7 @@ class Restaurant(models.Model):
         FILIPINO = 'PH', 'Filipino'
         OTHER = 'OT', 'Other'
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, validators=[validate_restaurant_name_begins_with_a])
     website = models.URLField(default='')
     date_opened = models.DateField()
     latitude = models.FloatField()
