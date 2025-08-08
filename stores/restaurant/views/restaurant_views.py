@@ -9,7 +9,7 @@ import json
 
 def restaurant_list(request):
     if request.method == 'GET':
-        restaurants = Restaurant.objects.all()
+        restaurants = Restaurant.objects.all().order_by('id')
         data = {
             'restaurants': [
                 {

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from pprint import pprint
 import random
 def run():
-   
+    User = get_user_model()
     # Create a 20 Test Restaurant
     """ for i in range(1, 21):
         Restaurant.objects.create(
@@ -33,6 +33,14 @@ def run():
         user.set_password("1234")
         user.save() """
    
+    """  #Create ratings for each restaurant
+    for restaurant in Restaurant.objects.all():
+       for user in User.objects.all().exclude(username='admin'):
+           Rating.objects.create(
+               user=user,
+               restaurant=restaurant,
+               rating=random.randint(1, 5)  
+           ) """
     pprint(connection.queries)  # Print all SQL queries executed during this run
 
 

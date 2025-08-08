@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, filter_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
@@ -95,7 +95,7 @@ def rating_delete(request, rating_id):
 def rating_list_of_restaurant(request, restaurant_id):
     if request.method == 'GET':
         restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
-        ratings = Rating.objects.filter(restaurant_id=restaurant_id)
+        ratings = Rating.objects.filter(restaurant_id=restaurant_id).order_by('id')
         data = [
             {
                 'id': rating.id,
@@ -117,7 +117,7 @@ def rating_list_of_user(request):
             return JsonResponse({"error": "user_id is required"}, status=400)
 
         user = get_object_or_404(User, pk=user_id)
-        ratings = Rating.objects.filter(user=user)
+        ratings = Rating.objects.filter(user=user).order_by('id')
         data = [
             {
                 'id': rating.id,
