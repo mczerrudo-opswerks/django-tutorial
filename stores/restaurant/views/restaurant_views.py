@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
-from .models import Restaurant
+from restaurant.models import Restaurant
 from django.utils import timezone
 import json
 # Create your views here.
@@ -56,10 +56,11 @@ def restaurant_create(request):
 
     return HttpResponseNotAllowed(['POST'])
 
-def restaurant_detail(request, pk):
+@csrf_exempt
+def restaurant_detail(request, restaurant_id):
     if request.method == 'GET':
         try:
-            restaurant = Restaurant.objects.get(pk=pk)
+            restaurant = Restaurant.objects.get(pk=restaurant_id)
             data = {
                 'id': restaurant.id,
                 'name': restaurant.name,
@@ -77,10 +78,11 @@ def restaurant_detail(request, pk):
 
     return HttpResponseNotAllowed(['GET'])
 
-def restaurant_update(request, pk):
+@csrf_exempt
+def restaurant_update(request, restaurant_id):
     if request.method == 'PUT':
         try:
-            restaurant = Restaurant.objects.get(pk=pk)
+            restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
             data = json.loads(request.body)
             restaurant.name = data.get('name', restaurant.name)
             restaurant.website = data.get('website', restaurant.website)
@@ -94,9 +96,6 @@ def restaurant_update(request, pk):
 
             return JsonResponse({'id': restaurant.id, 'message': 'Restaurant updated successfully'}, status=200)
 
-        except Restaurant.DoesNotExist:
-            return JsonResponse({"error": "Restaurant not found"}, status=404)
-
         except ValidationError as e:
             return JsonResponse({"errors": e.message_dict}, status=400)
 
@@ -104,5 +103,18 @@ def restaurant_update(request, pk):
             return JsonResponse({"error": str(e)}, status=500)
 
     return HttpResponseNotAllowed(['PUT'])
+
+@csrf_exempt
+def restaurant_delete(request, restaurant_id):
+    if request.method == 'DELETE':
+        try:
+            restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+            restaurant.delete()
+            return JsonResponse({'message': 'Restaurant deleted successfully'}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return HttpResponseNotAllowed(['DELETE'])
 
 

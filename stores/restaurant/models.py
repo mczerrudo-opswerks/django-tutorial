@@ -68,6 +68,13 @@ class Rating(models.Model):
     def __str__(self):
         return f"Rating: {self.rating}"
     
+    def clean(self):
+        # Prevent duplicate rating from same user for the same restaurant. Question: should I put this in views?
+        if Rating.objects.filter(user=self.user, restaurant=self.restaurant).exclude(pk=self.pk).exists():
+            raise ValidationError("You have already rated this restaurant.")
+        
+
+        
 # Sales model
 class Sales(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, related_name='sales')
