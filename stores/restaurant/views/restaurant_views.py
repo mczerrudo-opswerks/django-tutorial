@@ -60,7 +60,7 @@ def restaurant_create(request):
 def restaurant_detail(request, restaurant_id):
     if request.method == 'GET':
         try:
-            restaurant = Restaurant.objects.get(pk=restaurant_id)
+            restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
             data = {
                 'id': restaurant.id,
                 'name': restaurant.name,

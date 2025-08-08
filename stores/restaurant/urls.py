@@ -4,11 +4,11 @@ from restaurant.views import restaurant_views, ratings_views
 app_name = 'restaurant'
 urlpatterns = [
     # Restaurant_Views
-    path('restaurant/', restaurant_views.restaurant_list, name="list"),
-    path('restaurant/create/', restaurant_views.restaurant_create, name="create"),
-    path('restaurant/<int:restaurant_id>/', restaurant_views.restaurant_detail, name="detail"),
-    path('restaurant/<int:restaurant_id>/update/', restaurant_views.restaurant_update, name="update"),
-    path('restaurant/<int:restaurant_id>/delete/', restaurant_views.restaurant_delete, name="delete"),
+    path('restaurant/', restaurant_views.restaurant_list, name="restaurant_list"),
+    path('restaurant/create/', restaurant_views.restaurant_create, name="restaurant_create"),
+    path('restaurant/<int:restaurant_id>/', restaurant_views.restaurant_detail, name="restaurant_detail"),
+    path('restaurant/<int:restaurant_id>/update/', restaurant_views.restaurant_update, name="restaurant_update"),
+    path('restaurant/<int:restaurant_id>/delete/', restaurant_views.restaurant_delete, name="restaurant_delete"),
 
     # Ratings_Views
     path('restaurant/<int:restaurant_id>/ratings/', ratings_views.rating_list_of_restaurant, name="ratings_list"),
