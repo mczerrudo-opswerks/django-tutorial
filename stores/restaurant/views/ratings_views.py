@@ -12,6 +12,10 @@ User = get_user_model()
 # Create Rating
 @csrf_exempt # For testing purposes only, not recommended for production
 def rating_create(request, restaurant_id):
+    """
+    Create a new rating for a restaurant
+        
+    """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -46,6 +50,10 @@ def rating_create(request, restaurant_id):
 #Get Rating
 @csrf_exempt
 def rating_detail(request, rating_id):
+    """
+    Get details of a specific rating by its ID
+        
+    """
     if request.method == 'GET':
         rating = get_object_or_404(Rating, pk=rating_id)
         data = {
@@ -61,6 +69,10 @@ def rating_detail(request, rating_id):
 # Update Rating
 @csrf_exempt
 def rating_update(request, rating_id):
+    """
+    Update an existing rating.
+
+    """
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
@@ -79,7 +91,11 @@ def rating_update(request, rating_id):
 
 # Delete Rating
 @csrf_exempt
-def rating_delete(request, rating_id):  
+def rating_delete(request, rating_id):
+    """
+    Delete a specific rating by its ID.
+        
+    """  
     if request.method == 'DELETE':
         try:
             rating = get_object_or_404(Rating, pk=rating_id)
@@ -93,9 +109,13 @@ def rating_delete(request, rating_id):
 
 
 def rating_list_of_restaurant(request, restaurant_id):
+    """
+    List all ratings for a specific restaurant.
+        
+    """
     if request.method == 'GET':
         restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
-        ratings = Rating.objects.filter(restaurant_id=restaurant_id).order_by('id')
+        ratings = restaurant.ratings.all().order_by('id')
         data = [
             {
                 'id': rating.id,
@@ -110,6 +130,10 @@ def rating_list_of_restaurant(request, restaurant_id):
     return HttpResponseNotAllowed(['GET'])
 
 def rating_list_of_user(request):
+    """
+    List all ratings for a specific user.
+
+    """
     if request.method == 'GET':
         data = json.loads(request.body)
         user_id = data.get('user_id')
@@ -117,7 +141,7 @@ def rating_list_of_user(request):
             return JsonResponse({"error": "user_id is required"}, status=400)
 
         user = get_object_or_404(User, pk=user_id)
-        ratings = Rating.objects.filter(user=user).order_by('id')
+        ratings = user.ratings.all().order_by('id')
         data = [
             {
                 'id': rating.id,
@@ -127,5 +151,22 @@ def rating_list_of_user(request):
             for rating in ratings
         ]
         return JsonResponse(data, safe=False, status=200)
+
+    return HttpResponseNotAllowed(['GET'])
+
+def average_rating(request, restaurant_id):
+    """
+    Test that a nonexistent restaurant returns a 404 error.
+        
+    """
+    if request.method == 'GET':
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+        ratings = restaurant.ratings.all()
+        
+        if not ratings:
+            return JsonResponse({"average_rating": None}, status=200)
+
+        average = sum(rating.rating for rating in ratings) / ratings.count()
+        return JsonResponse({"average_rating": average}, status=200)
 
     return HttpResponseNotAllowed(['GET'])

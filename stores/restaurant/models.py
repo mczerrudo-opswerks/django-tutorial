@@ -55,7 +55,7 @@ class Restaurant(models.Model):
 # Rating model
 class Rating(models.Model):
     user = models.ForeignKey(
-        UserModel, on_delete=models.CASCADE
+        UserModel, on_delete=models.CASCADE, related_name='ratings'
     )
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE, related_name='ratings'

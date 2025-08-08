@@ -17,5 +17,6 @@ urlpatterns = [
     path('ratings/<int:rating_id>/update/', ratings_views.rating_update, name="rating_update"),
     path('ratings/<int:rating_id>/delete/', ratings_views.rating_delete, name="rating_delete"),
     path('user/ratings/', ratings_views.rating_list_of_user, name="user_ratings"),
-    
+    path('restaurant/<int:restaurant_id>/average-rating/', ratings_views.average_rating, name="average_rating"),
+
 ]

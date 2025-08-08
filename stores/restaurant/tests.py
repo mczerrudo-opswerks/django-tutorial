@@ -78,6 +78,8 @@ class RestaurantCreateTests(TestCase):
         body = res.json()
         self.assertIn("errors", body)  # from ValidationError
         self.assertEqual(res.status_code, 400)
+    
+
 
 class RestaurantDetailTests(TestCase):
     def setUp(self):
@@ -111,7 +113,41 @@ class RestaurantDetailTests(TestCase):
     def test_get_nonexistent_restaurant_returns_404(self):
         """
         Test that a nonexistent restaurant returns a 404 error.
+        
         """
         url = reverse("restaurant:restaurant_detail", kwargs={"restaurant_id": 999})
         res = self.client.get(url)
         self.assertEqual(res.status_code, 404)
+
+class RestaurantUpdateTests(TestCase):
+    def setUp(self):
+        self.r0 = Restaurant.objects.create(
+            name="A", website="https://a.com", date_opened="2022-01-01",
+            latitude=0.0, longitude=0.0, address="addr A", restaurant_type="OH"
+        )
+        self.url = reverse("restaurant:restaurant_update", kwargs={"restaurant_id": self.r0.id})
+
+    def test_update_valid(self):
+        """
+        Test that a restaurant can be updated successfully.
+        """
+        data = {
+            "name": "Updated Restaurant",
+            "website": "https://updated.com",
+            "date_opened": DATE,
+            "latitude": 12.34,
+            "longitude": 56.78,
+            "address": "123 Updated St",
+            "restaurant_type": "IN",
+        }
+        res = jput(self.client, self.url, data)
+        self.assertEqual(res.status_code, 200)
+        self.r0.refresh_from_db()
+        self.assertEqual(self.r0.name, "Updated Restaurant")
+        self.assertEqual(self.r0.website, "https://updated.com")
+        self.assertEqual(self.r0.date_opened.isoformat(), DATE)
+        self.assertEqual(self.r0.latitude, 12.34)
+        self.assertEqual(self.r0.longitude, 56.78)
+        self.assertEqual(self.r0.address, "123 Updated St")
+        self.assertEqual(self.r0.restaurant_type, "IN")
+        

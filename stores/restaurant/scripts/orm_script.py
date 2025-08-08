@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from restaurant.models import Restaurant, Rating, Sales
 from django.utils import timezone
 from django.db import connection
@@ -41,6 +42,10 @@ def run():
                restaurant=restaurant,
                rating=random.randint(1, 5)  
            ) """
+
+    user = get_object_or_404(User, pk=2)
+    ratings = user.ratings.all()
+    print(ratings)
     pprint(connection.queries)  # Print all SQL queries executed during this run
 
 
